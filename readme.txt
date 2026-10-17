@@ -109,3 +109,5 @@ If an incident is already open for that service, NIMIP does not create another o
 When the service recovers, NIMIP resolves the open incident.
 
 MAke the service check automatic
+
+https://chatgpt.com/c/6ac4e62a-1bc8-83ec-9722-b064dc08405e
