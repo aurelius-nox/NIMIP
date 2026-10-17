@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:18.6
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: nimip
+    ports:
+      - "5432:5432"
+    volumes:
+      - nimip-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d nimip"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  monitored-service:
+    build:
+      context: .
+      dockerfile: monitored_service/Dockerfile
+    ports:
+      - "5002:5002"
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: postgresql://postgres:secret@postgres:5432/nimip
+    depends_on:
+      postgres:
+        condition: service_healthy
+      monitored-service:
+        condition: service_started
+
+volumes:
+  nimip-data:
+    external: true
+    name: 858e7c4948b207fefd758ff1a245d171bbecfd37ea3f8786b47117e6170114ba
